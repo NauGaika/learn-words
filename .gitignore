@@ -9,3 +9,5 @@ nuxt/.nuxt
 
 # Nuxt generate
 nuxt/dist
+
+api/env

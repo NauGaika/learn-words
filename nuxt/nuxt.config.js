@@ -20,10 +20,18 @@ module.exports = {
   /*
   ** Build configuration
   */
+  modules: ['@nuxtjs/proxy'],
+  axios: {
+    proxy: true
+  },
+  proxy: {
+    '/api/': { target: 'http://127.0.0.1:5000/', pathRewrite: {'^/api/': ''} }
+  },
   build: {
     /*
     ** Run ESLint on save
     */
+    vendor: ['axios'],
     extend (config, { isDev, isClient }) {
       if (isDev && isClient) {
         config.module.rules.push({
