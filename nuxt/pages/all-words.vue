@@ -1,7 +1,6 @@
 <template lang="pug">
-section
-  h1 Все слова
-  span Все слова
+div
+  h2 Все слова пользователя {{myName}}
   table
     tbody
       tr(v-for="word in allWords")
@@ -21,11 +20,12 @@ export default {
   asyncData () {
     return axios({
       method: 'get',
-      url: 'http://127.0.0.1:3001/api/word/get-all'
+      url: 'http://127.0.0.1:3001/api/word/get-all/en-ru'
     })
     .then((response) => {
       return {
-        allWords: response.data
+        allWords: response.data,
+        myName: ""
       }
     })
   },
@@ -35,7 +35,13 @@ export default {
   beforeCreate () {},
   created () {},
   beforeMount () {},
-  mounted () {},
+  mounted () {
+    if (process.client) {
+      if(localStorage.myName){
+        this.myName = localStorage.myName
+      }
+    }
+  },
   beforeUpdate () {},
   updated () {},
   activated () {},

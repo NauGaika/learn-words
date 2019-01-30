@@ -9,11 +9,12 @@ word_api = Blueprint('word_api', __name__)
 def word_add():
     """add word to db """
     if request.method == "POST":
-        return Word.Word.create(request)
-    return ''
+        Word.create(request)
+    return 'ok'
 
-@word_api.route('/word/get-all', methods=['GET','POST'])
-def word_get_all():
+@word_api.route('/word/get-all/<langs>', methods=['GET','POST'])
+def word_get_all(langs):
     """get all word """
     if request.method == "GET":
-        return Word.Word.get_all('en', 'ru')
+        langs = langs.split('-')
+        return Word.get_all(langs[0], langs[1])

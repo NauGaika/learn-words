@@ -1,5 +1,5 @@
 <template lang="pug">
-  div.WordMenuContainer
+  nav
     ul
       li
         nuxt-link(to="/") Главная страница
@@ -41,4 +41,20 @@ export default {
 }
 </script>
 <style>
+  nav ul {
+    list-style: none;
+    text-align: center;
+  }
+  nav ul li {
+    display: inline;
+    padding: 1em;
+    
+  }
+  nav ul li a {
+    color: black;
+    transition: .5s;
+  }
+  nav ul li a:hover {
+    color: blue;
+  }
 </style>

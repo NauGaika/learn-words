@@ -1,17 +1,16 @@
 <template lang="pug">
 section
-  h1 Добавление слова
-  span Добавление новых слов в словарь
+  h2 Добавление новых слов в словарь
   .MenuContainer
     select(v-model="lang_1")
       option(value="en") Английский
-      option(value="ru") Русски
+      option(value="ru") Русский
     select(v-model="lang_2")
       option(value="en") Английский
-      option(value="ru") Русски
+      option(value="ru") Русский
   .GeneralContainer
     input(type="text"
-          placeholder="Слово на английском"
+          placeholder="Слово"
           v-model="SysCurrentEngWord")
     input(type="text"
           placeholder="Перевод слова"
@@ -19,12 +18,14 @@ section
   .ButtonContainer
     button(@click="addWord") Добавить слово
   div
-    span(v-for="(word, key) in getWordWithTranslateByLang" :key="'curWord_'+key")
-      span(@click="delEngWord(key)") {{word.value}} :
-      span(v-for="(word_1, key_1) in word.translate"
-      :key="'curWord' + key + '_' + key_1"
-      @click="delTranslate({key, RusKey})") {{word_1}},
-      br
+    table
+      tbody
+        tr(v-for="(word, key) in getWordWithTranslateByLang" :key="'curWord_'+key")
+          td {{word.value}}
+          td
+            span(v-for="(word_1, key_1) in word.translate"
+            :key="'curWord' + key + '_' + key_1"
+            @click="delTranslate({key, RusKey})") {{word_1}}, 
 </template>
 <!-- is, v-for, v-if, v-else-if, v-else, v-show, v-cloak, v-pre, v-once, id, ref, key, slot, v-model, другие атрибуты, v-on, v-html, v-text -->
 <script>
@@ -33,8 +34,8 @@ export default {
   components: {},
   asyncData () {
     return {
-      SysCurrentRusWord: "Привет",
-      SysCurrentEngWord: "hello",
+      SysCurrentRusWord: "",
+      SysCurrentEngWord: "",
       lang_1: 'en',
       lang_2: 'ru',
       currentWords: []
@@ -137,5 +138,34 @@ export default {
   }
 }
 </script>
-<style>
+<style scope>
+  .MenuContainer {
+    text-align: center;
+  }
+  .MenuContainer select {
+    height: 2em;
+    color: black;
+    border: 1px solid black;
+    border-radius: .3em;
+    margin: 0 .5em;
+    background: silver;
+  }
+  .GeneralContainer, .ButtonContainer {
+    margin-top: 1em;
+    text-align: center;
+  }
+  .GeneralContainer input, .ButtonContainer button  {
+    background: silver;
+    height: 2em;
+    border: 1px solid black;
+    border-radius: .3em;
+    margin: 0 .5em;
+    text-align: center;
+  }
+  .ButtonContainer button {
+    cursor: pointer;
+  }
+  .ButtonContainer button:hover {
+    background: SlateGrey;
+  }
 </style>

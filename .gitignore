@@ -11,3 +11,5 @@ nuxt/.nuxt
 nuxt/dist
 
 api/env
+
+*.pyc
