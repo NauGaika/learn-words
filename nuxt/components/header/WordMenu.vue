@@ -6,6 +6,8 @@
       li
         nuxt-link(to="/add-words") Добавление слов
       li
+        nuxt-link(to="/dictionary") Словари
+      li
         nuxt-link(to="/training-words") Тренировка слов
       li
         nuxt-link(to="/all-words") Все слова

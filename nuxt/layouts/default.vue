@@ -24,7 +24,7 @@ h2 {
   font-size: 2em;
   text-align: center;
 }
-button {
+button, select {
   background: silver;
   height: 2em;
   border: 1px solid black;
@@ -33,9 +33,22 @@ button {
   text-align: center;
   font-size: 1em;
   margin-top: .5em;
+  min-width: 5em;
+  text-align: center;
 }
 button:hover {
   cursor: pointer;
   background: SlateGrey;
+}
+input  {
+  background: silver;
+  height: 2em;
+  border: 1px solid black;
+  border-radius: .3em;
+  margin: 0 .5em;
+  text-align: center;
+}
+div {
+  text-align: center;
 }
 </style>

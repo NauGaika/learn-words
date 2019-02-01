@@ -5,19 +5,21 @@ from .. import db
 from .Word_associate import Word_associate
 from sqlalchemy import and_
 
-
-
 class Word(db.Model):
     __tablename__ = "word"
     id = db.Column(db.Integer, primary_key=True)
     value = db.Column(db.String(120), nullable=False)
     lang = db.Column(db.String(120), nullable=False)
-    trans_to = db.relationship('Word',
-        secondary=Word_associate,
-        primaryjoin=id==Word_associate.c.trans_to,
-        secondaryjoin=id==Word_associate.c.trans_from,
-        backref="trans_from")
-    # trans_from = db.relationship('Word', secondary="word_associate",foreign_keys="Word_associate.trans_from", cascade="save-update, merge, delete")
+    translates = db.relationship("Word",
+        secondary="word_associate",
+        backref="words",
+        primaryjoin="Word.id==Word_associate.word_id",
+        secondaryjoin="Word.id==Word_associate.translate_id")
+    # word_associates = db.relationship("Word_associate", backref="word", primaryjoin="Word.id = Word_associate.word_id")
+
+    def __init__(self, value, lang):
+        self.value = value
+        self.lang = lang
 
     def __repr__(self):
         return str(self.id) + "_" + self.value + "_" + self.lang
@@ -29,16 +31,21 @@ class Word(db.Model):
         elem['value'] = self.value
         return elem
 
-    @classmethod
-    def create(cls, request):
-        lang_1 = request.form['lang_1'].strip().lower()
-        lang_2 = request.form['lang_2'].strip().lower()
-        word_1 = request.form['word_1'].strip().lower()
-        word_2 = request.form['word_2'].strip().lower()
-        word_1 = cls.create_or_get_word(word_1, lang_1)
-        word_2 = cls.create_or_get_word(word_2, lang_2)
-        # print(word_1.trans_from)
-        cls.make_associate(word_1, word_2)
+    def add_translate_if_not_exits(self, word):
+        if word not in self.translates:
+            self.translates.append(word)
+            db.session.commit()
+        return Word_associate.get_associate(self, word)
+
+    def get_translate_values(self):
+        data_post = []
+        k = 0
+        for i in self.translates:
+            data_post.append(i.value)
+            if k > 9:
+                break
+            k = k + 1
+        return data_post
 
     @classmethod
     def make_associate(cls, w1, w2):
@@ -46,6 +53,27 @@ class Word(db.Model):
             w1.trans_to.append(w2)
             w2.trans_to.append(w1)
             db.session.commit()
+
+
+
+    @staticmethod
+    def clear_string(string):
+        return str(string).strip().lower()
+
+    @classmethod
+    def create_or_get_word_by_value(cls, word, lang):
+        word = cls.clear_string(word)
+        lang = cls.clear_string(lang)
+        word = cls.create_or_get_word(word, lang)
+        return word
+
+    @classmethod
+    def get_word_if_exist(cls, word, lang):
+        word = cls.clear_string(word)
+        lang = cls.clear_string(lang)
+        word = cls.query.filter(and_(cls.value == word, cls.lang == lang)).first()
+        return word
+
 
     @classmethod
     def create_or_get_word(cls, word, lang):
@@ -60,23 +88,3 @@ class Word(db.Model):
         db.session.add(new_word)
         db.session.commit()
         return new_word
-
-    # @classmethod
-    # def get_all(cls, lang, trans_lang):
-    #     all_word = cls.query.filter(cls.lang == lang).all()
-    #     words_with_translate = []
-    #     for word in all_word:
-    #         trans_arr = []
-    #         for trans_index in word.trans_from:
-    #             trans = trans_index.trans_to
-    #             if trans.lang == trans_lang:
-    #                 trans_arr.append({
-    #                 'id': trans.id,
-    #                 'value': trans.value
-    #                 })
-    #         words_with_translate.append({
-    #         'id': word.id,
-    #         'value': word.value,
-    #         'trans': trans_arr
-    #         })
-    #     return json.dumps(words_with_translate)

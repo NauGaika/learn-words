@@ -1,6 +1,6 @@
 <template lang="pug">
   section
-    h2 {{myNameSys.langth > 0 ? "Зарегистрируйтесь или войдите": "Я " + myNameSys}}
+    h2 {{myNameSys.length == 0 ? "Зарегистрируйтесь или войдите": "Я " + myNameSys}}
     div.LoginContainer
       input(v-if="myNameSys.length == 0" v-model="myName" placeholder="мое имя")
     button(v-if="myNameSys.length == 0" @click="registrate") Зарегистрироваться
@@ -30,20 +30,22 @@ export default {
           config: { headers: {'Content-Type': 'multipart/form-data' }},
         })
         .then((response) => {
-          this.myNameSys = this.myName
-          localStorage.myName = this.myNameSys 
-          console.log(response)
+          this.myNameSys = response.data['user_name']
+          localStorage.userName = response.data['user_name']
+          localStorage.userId = response.data['user_id']
         })
       }
     },
     exit () {
-      localStorage.myName = '',
+      localStorage.userName = '',
       this.myNameSys = ''
     }
   },
   mounted () {
     if (process.client) {
-      this.myNameSys = localStorage.myName
+      if (localStorage.userName){
+        this.myNameSys = localStorage.userName
+      }
     }
   }
 }

@@ -1,13 +1,20 @@
 # -*- coding: utf-8 -*-
 import json
 from .. import db
-from .Dictionary import Dictionary
+from flask import request
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), nullable=False)
-    dicts = db.relationship('Dictionary', backref='user', lazy=False)
 
+    def __repr__(self):
+        return "*********\n\rid = " + str(self.id) + "  \n\rname = " + self.name + "\n\r*********"
+
+    def user_dict_id_is_exist(self, dict_id):
+        for dict in self.dicts:
+            if dict.id == int(dict_id):
+                return dict
+                
     @classmethod
     def registrate(cls, name):
         new_user = cls(name=name)
@@ -29,6 +36,20 @@ class User(db.Model):
                 return user
             user = cls.registrate(name)
             return user
+
+    @classmethod
+    def get_user_by_id(cls, user_id):
+        return cls.query.get(user_id)
+
+    @classmethod
+    def user_verificateion(cls, req):
+        if req is request:
+            obj = json.loads(request.data)
+            user_id = int(obj['userId'])
+        else:
+            user_id = int(req)
+        return cls.get_user_by_id(user_id)
+
 
     def get_user_data(self):
         user = {}
